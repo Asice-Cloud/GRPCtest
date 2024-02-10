@@ -1,0 +1,20 @@
+syntax="proto3";
+
+option go_package = ".;service";
+
+service Grace {
+  rpc Welcome(WelcomeRequest) returns (WelcomeResponse);
+}
+
+message WelcomeRequest {
+  message person {
+    string name = 1;
+    int32 age = 2;
+  }
+  person People = 1;
+  string requestName = 2;
+}
+
+message WelcomeResponse {
+  string responseMessage = 1;
+}

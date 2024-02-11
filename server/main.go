@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"log"
 	"net"
 )
@@ -21,15 +22,20 @@ func (s *server) Welcome(ctx context.Context, req *pb.WelcomeRequest) (*pb.Welco
 
 func main() {
 	//Authorization:
+	creds, credErr := credentials.NewServerTLSFromFile("key/test.pem", "key/test.key")
+	if credErr != nil {
+		log.Fatalf("License error %v", credErr)
+		return
+	}
 
 	//1.open port:
-	listen, err := net.Listen("tcp", ":9876")
+	listen, err := net.Listen("tcp", ":9999")
 	if err != nil {
 		log.Fatalf("Failed to open port,err is %v", err)
 		return
 	}
 	//2.create grpc service:
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(grpc.Creds(creds))
 	//3. register our service:
 	pb.RegisterGraceServer(grpcServer, &server{})
 	//4.launch server:

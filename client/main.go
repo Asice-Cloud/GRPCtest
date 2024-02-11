@@ -5,13 +5,20 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 	"log"
 )
 
 func main() {
-	var remoteAddress string = "127.0.0.1:9876"
-	connect, err := grpc.Dial(remoteAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	//ssl authorization:
+	creds, credErr := credentials.NewServerTLSFromFile("key/test.pem", "*")
+	if credErr != nil {
+		log.Fatalf("License failure,error is: %v", credErr)
+	}
+
+	//verifier
+	var remoteAddress string = "127.0.0.1:9999"
+	connect, err := grpc.Dial(remoteAddress, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Fatalf("Failed to connect remote server %v , err is %v", remoteAddress, err)
 	}
